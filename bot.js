@@ -141,7 +141,7 @@ bot.on('inline_query', query => {
             id: UNAUTHORIZED_ID,
             type: 'article',
             title: 'Unauthorized user',
-            message_text: 'Remix the project for your personal use: https://glitch.com/~tenki-bot-telegram'
+            message_text: `Remix the project for your personal use: https://glitch.com/~${process.env.PROJECT_NAME}`
         }]);
     }
 });
