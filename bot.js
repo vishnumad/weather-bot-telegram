@@ -8,8 +8,8 @@ const MAX_RESULTS = 8;
 const bot = new TelegramBot(TOKEN);
 const authUsers = process.env.AUTHORIZED_USERS.split(',').map(id => parseInt(id, 10));
 
-function getCitySuggestions(search_term) {
-    const url = `https://api.teleport.org/api/cities/?search=${search_term}`;
+function getCitySuggestions(searchTerm) {
+    const url = `https://api.teleport.org/api/cities/?search=${searchTerm}`;
     const request = new XMLHttpRequest();
     request.open('GET', url, false);
     request.send(null);
@@ -34,8 +34,8 @@ function getCitySuggestions(search_term) {
     return [];
 }
 
-function getWeather(city_id) {
-    const url = `http://api.openweathermap.org/data/2.5/weather?id=${city_id}&appid=${process.env.OWM_APP_ID}`;
+function getWeather(cityId) {
+    const url = `http://api.openweathermap.org/data/2.5/weather?id=${cityId}&appid=${process.env.OWM_APP_ID}`;
     const request = new XMLHttpRequest();
     request.open('GET', url, false);
     request.send(null);
@@ -51,9 +51,7 @@ function getWeather(city_id) {
             max: `${kelvinToF(weather.main.temp_max)}°F / ${kelvinToC(weather.main.temp_max)}°C`
         };
     }
-    return {
-        success: false
-    }
+    return { success: false };
 }
 
 function extractCityId(url) {
@@ -113,21 +111,23 @@ function getWeatherCondition(code, condition) {
 
 bot.setWebHook(`https://${process.env.PROJECT_NAME}.glitch.me/bot${TOKEN}`);
 
-bot.onText(/\/ping/, msg => {
-    bot.sendMessage(msg.chat.id, 'It\'s stuffy in this server! 😓');
+bot.onText(/\/ping/, message => {
+    bot.sendMessage(message.chat.id, 'It\'s stuffy in this server! 😓');
 });
 
-bot.onText(/\/start/, msg => {
-    if (msg.chat.id == process.env.GROUP_CHAT_ID) {
-        bot.sendMessage(msg.chat.id, 'Use @tenki_bot <location>');
+bot.onText(/\/start/, message => {
+    if (authUsers.contains(message.from.id) && message.chat.id == process.env.GROUP_CHAT_ID) {
+        bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
+    } else if (message.chat.id < 0) {
+        bot.sendMessage('Unauthorized user/chat');
+        bot.leaveChat(message.chat.id);
     } else {
-        console.log(`Leaving chat: ${msg.chat.id}`);
-        bot.leaveChat(msg.chat.id);
+        bot.sendMessage('Unauthorized user/chat');
     }
 });
 
-bot.onText(/\/help/, msg => {
-    bot.sendMessage(msg.chat.id, 'Use @tenki_bot <location>');
+bot.onText(/\/help/, message => {
+    bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
 });
 
 bot.on('inline_query', query => {
@@ -146,9 +146,9 @@ bot.on('inline_query', query => {
     }
 });
 
-bot.on('chosen_inline_result', query => {
-    if (query.result_id !== UNAUTHORIZED_ID) {
-        const { success, city, temp, condition, min, max } = getWeather(query.result_id);
+bot.on('chosen_inline_result', result => {
+    if (result.result_id !== UNAUTHORIZED_ID) {
+        const { success, city, temp, condition, min, max } = getWeather(result.result_id);
         if (success) {
             bot.sendMessage(process.env.GROUP_CHAT_ID, `It's ${temp} in ${city} ${condition}. The high is ${max} and the low is ${min}.`);
         }
