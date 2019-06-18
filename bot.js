@@ -12,8 +12,6 @@ const UNAUTHORIZED_ANSWER = {
   message_text: `Remix the project for your personal use: https://glitch.com/~${process.env.PROJECT_NAME}`
 };
 
-const CITY_ID_PATTERN = /([0-9])\w+/g;
-
 const bot = new TelegramBot(TOKEN);
 const authorizedUsers = process.env.AUTHORIZED_USERS.split(',').map(id => parseInt(id, 10));
 
@@ -29,6 +27,7 @@ function fetchCitySuggestions(query) {
       if (max > MAX_RESULTS) max = MAX_RESULTS;
     
       for (let i = 0; i < max; i++) {
+        console.log(suggestions[i]);
         const cityId = "" + extractCityId(suggestions[i]._links['city:item'].href);
         cities.push({
           id: cityId,
@@ -84,7 +83,8 @@ function status(response) {
 }
 
 function extractCityId(url) {
-  return CITY_ID_PATTERN.exec(url)[0];
+  const pattern = /([0-9])\w+/g;
+  return pattern.exec(url)[0];
 }
 
 function convertFtoC(temp) {
