@@ -1,5 +1,9 @@
 const TelegramBot = require('node-telegram-bot-api');
 const fetch = require('node-fetch');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('.data/db.json');
+const db = low(adapter);
 
 const TOKEN = process.env.TELEGRAM_TOKEN;
 const UNAUTHORIZED_ID = '-1';
@@ -27,7 +31,6 @@ function fetchCitySuggestions(query) {
       if (max > MAX_RESULTS) max = MAX_RESULTS;
     
       for (let i = 0; i < max; i++) {
-        console.log(suggestions[i]);
         const cityId = "" + extractCityId(suggestions[i]._links['city:item'].href);
         cities.push({
           id: cityId,
@@ -42,16 +45,35 @@ function fetchCitySuggestions(query) {
 }
 
 function fetchCityInfo(id) {
-  return fetch(`https://api.teleport.org/api/cities/geonameid:${id}/`)
-    .then(status)
-    .then(asJson)
-    .then(response => {
-      return Promise.resolve({
-        city: response.full_name,
-        latitude: response.location.latlon.latitude,
-        longitude: response.location.latlon.longitude
+  const dbLoc = db.get('locations')
+    .find({ id: id })
+    .value();
+  
+  if (dbLoc == null) {
+    // No saved values, fetch from API
+    return fetch(`https://api.teleport.org/api/cities/geonameid:${id}/`)
+      .then(status)
+      .then(asJson)
+      .then(response => {
+        const location = {
+          city: response.full_name,
+          latitude: response.location.latlon.latitude,
+          longitude: response.location.latlon.longitude
+        }
+        
+        // Save to database
+        db.get('locations')
+          .push({ id: id, cityInfo: location })
+          .write();
+      
+        console.log(`Saved to databse: id=${id}, city=${location.city}, latitude=${location.latitude}, longitude=${location.longitude}`);
+        
+        return Promise.resolve(location);
       });
-    });
+  } else {
+    // City info in databse so we can use that
+    return Promise.resolve(dbLoc.cityInfo);
+  }
 }
 
 function fetchWeatherInfo(cityInfo) {
@@ -100,6 +122,8 @@ function round(value, precision) {
     return Math.round(value);
   }
 }
+
+db.defaults({ locations: [] }).write()
 
 bot.setWebHook(`https://${process.env.PROJECT_NAME}.glitch.me/bot${TOKEN}`);
 
