@@ -1,158 +1,157 @@
 const TelegramBot = require('node-telegram-bot-api');
-const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+const fetch = require('node-fetch');
 
 const TOKEN = process.env.TELEGRAM_TOKEN;
 const UNAUTHORIZED_ID = '-1';
 const MAX_RESULTS = 8;
 
+const UNAUTHORIZED_ANSWER = {
+  id: UNAUTHORIZED_ID,
+  type: 'article',
+  title: 'Unauthorized user',
+  message_text: `Remix the project for your personal use: https://glitch.com/~${process.env.PROJECT_NAME}`
+};
+
+const CITY_ID_PATTERN = /([0-9])\w+/g;
+
 const bot = new TelegramBot(TOKEN);
-const authUsers = process.env.AUTHORIZED_USERS.split(',').map(id => parseInt(id, 10));
+const authorizedUsers = process.env.AUTHORIZED_USERS.split(',').map(id => parseInt(id, 10));
 
-function getCitySuggestions(searchTerm) {
-    const url = `https://api.teleport.org/api/cities/?search=${searchTerm}`;
-    const request = new XMLHttpRequest();
-    request.open('GET', url, false);
-    request.send(null);
-
-    if (request.status === 200) {
-        const suggestions = JSON.parse(request.responseText)._embedded['city:search-results'];
-        let cities = [];
-
-        let max = suggestions.length;
-        if (max > MAX_RESULTS) max = MAX_RESULTS;
-        for (let i = 0; i < max; i++) {
-            const cityId = "" + extractCityId(suggestions[i]._links['city:item'].href);
-            cities.push({
-                id: cityId,
-                type: 'article',
-                title: suggestions[i].matching_full_name,
-                message_text: `Weather: ${suggestions[i].matching_full_name}`
-            });
-        }
-        return cities;
-    }
-    return [];
+function fetchCitySuggestions(query) {
+  return fetch(`https://api.teleport.org/api/cities/?search=${query}`)
+    .then(status)
+    .then(asJson)
+    .then(response => {
+      const suggestions = response._embedded['city:search-results'];
+      let cities = [];
+    
+      let max = suggestions.length;
+      if (max > MAX_RESULTS) max = MAX_RESULTS;
+    
+      for (let i = 0; i < max; i++) {
+        const cityId = "" + extractCityId(suggestions[i]._links['city:item'].href);
+        cities.push({
+          id: cityId,
+          type: 'article',
+          title: suggestions[i].matching_full_name,
+          message_text: `Weather: ${suggestions[i].matching_full_name}`
+        });
+      }
+    
+      return Promise.resolve(cities);
+    });
 }
 
-function getWeather(cityId) {
-    const url = `http://api.openweathermap.org/data/2.5/weather?id=${cityId}&appid=${process.env.OWM_APP_ID}`;
-    const request = new XMLHttpRequest();
-    request.open('GET', url, false);
-    request.send(null);
+function fetchCityInfo(id) {
+  return fetch(`https://api.teleport.org/api/cities/geonameid:${id}/`)
+    .then(status)
+    .then(asJson)
+    .then(response => {
+      return Promise.resolve({
+        city: response.full_name,
+        latitude: response.location.latlon.latitude,
+        longitude: response.location.latlon.longitude
+      });
+    });
+}
 
-    if (request.status === 200) {
-        const weather = JSON.parse(request.responseText);
-        return {
-            success: true,
-            city: weather.name,
-            temp: `${kelvinToF(weather.main.temp)}°F / ${kelvinToC(weather.main.temp)}°C`,
-            condition: getWeatherCondition(weather.weather[0].id, weather.weather[0].description),
-            min: `${kelvinToF(weather.main.temp_min)}°F / ${kelvinToC(weather.main.temp_min)}°C`,
-            max: `${kelvinToF(weather.main.temp_max)}°F / ${kelvinToC(weather.main.temp_max)}°C`
-        };
-    }
-    return { success: false };
+function fetchWeatherInfo(cityInfo) {
+  return fetch(`https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/${cityInfo.latitude},${cityInfo.longitude}`)
+    .then(status)
+    .then(asJson)
+    .then(weather => {
+      return Promise.resolve({
+        city: cityInfo.city,
+        temperature: `${weather.currently.temperature}°F (${convertFtoC(weather.currently.temperature)}°C)`,
+        summary: weather.currently.summary,
+        feelsLike: `${weather.currently.apparentTemperature}°F (${convertFtoC(weather.currently.apparentTemperature)}°C)`,
+        hi: `${weather.daily.data[0].temperatureHigh}°F (${convertFtoC(weather.daily.data[0].temperatureHigh)}°C)`,
+        lo: `${weather.daily.data[0].temperatureLow}°F (${convertFtoC(weather.daily.data[0].temperatureLow)}°C)`
+      });
+    });
+}
+
+function asJson(response) {
+  return response.json();
+}
+
+function status(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  } else {
+    return Promise.reject(new Error(response.statusText))
+  }
 }
 
 function extractCityId(url) {
-    const pattern = /([0-9])\w+/g;
-    return pattern.exec(url)[0];
+  return CITY_ID_PATTERN.exec(url)[0];
 }
 
-function kelvinToF(kelvin) {
-    return round(1.8 * (kelvin - 273) + 32, 1);
-}
-
-function kelvinToC(kelvin) {
-    return round(kelvin - 273, 1);
+function convertFtoC(temp) {
+  return round((temp - 32) * (5 / 9), 1)
 }
 
 // https://stackoverflow.com/a/47151941/2649697
 function round(value, precision) {
-    if (Number.isInteger(precision)) {
-        const shift = 10 ** precision;
-        return Math.round(value * shift) / shift;
-    } else {
-        return Math.round(value);
-    }
-}
-
-function getWeatherCondition(code, condition) {
-    // Specific weather condition
-    switch (code) {
-        case 200:
-        case 201:
-        case 202:
-        case 230:
-        case 231:
-        case 232:
-            return `with a ${condition.replace('with', 'and')}`;
-        case 520:
-        case 521:
-        case 522:
-        case 531:
-            return `with ${condition.replace('shower rain', 'rain showers')}`;
-        case 620:
-        case 621:
-        case 622:
-            return `with ${condition.replace('shower snow', 'snow showers')}`;
-        case 731:
-            return 'with sand and dust whirls';
-        case 781:
-            return 'with tornadoes';
-        case 800:
-            return 'with clear skies';
-    }
-    // General thunderstorm
-    if (code >= 200 && code < 300) return `with a ${condition}`;
-    // General weather condition
-    return `with ${condition}`;
+  if (Number.isInteger(precision)) {
+    const shift = 10 ** precision;
+    return Math.round(value * shift) / shift;
+  } else {
+    return Math.round(value);
+  }
 }
 
 bot.setWebHook(`https://${process.env.PROJECT_NAME}.glitch.me/bot${TOKEN}`);
 
 bot.onText(/\/ping/, message => {
-    bot.sendMessage(message.chat.id, 'It\'s stuffy in this server! 😓');
+  bot.sendMessage(message.chat.id, 'It\'s stuffy in this server! 😓');
 });
 
 bot.onText(/\/start/, message => {
-    if (authUsers.contains(message.from.id) && message.chat.id == process.env.GROUP_CHAT_ID) {
-        bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
-    } else if (message.chat.id < 0) {
-        bot.sendMessage('Unauthorized user/chat');
-        bot.leaveChat(message.chat.id);
-    } else {
-        bot.sendMessage('Unauthorized user/chat');
-    }
+  if (authorizedUsers.contains(message.from.id) && message.chat.id == process.env.GROUP_CHAT_ID) {
+    bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
+  } else {
+    bot.sendMessage('Unauthorized user/chat');
+    if (message.chat.id < 0)
+      bot.leaveChat(message.chat.id);
+  }
 });
 
 bot.onText(/\/help/, message => {
-    bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
+  bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
 });
 
 bot.on('inline_query', query => {
-    if (authUsers.includes(query.from.id)) {
-        if (query.query.length >= 3) {
-            const cities = getCitySuggestions(query.query);
-            if (cities.length > 0) bot.answerInlineQuery(query.id, cities);
-        }
-    } else {
-        bot.answerInlineQuery(query.id, [{
-            id: UNAUTHORIZED_ID,
-            type: 'article',
-            title: 'Unauthorized user',
-            message_text: `Remix the project for your personal use: https://glitch.com/~${process.env.PROJECT_NAME}`
-        }]);
-    }
+  
+  if (!authorizedUsers.includes(query.from.id)) {
+    bot.answerInlineQuery(query.id, [UNAUTHORIZED_ANSWER]);
+    return;
+  }
+  if (query.query.length < 3) return;
+  
+  // Fetch city autocomplete suggestions
+  fetchCitySuggestions(query.query)
+    .then(cities => {
+      bot.answerInlineQuery(query.id, cities);
+    })
+    .catch(error => {
+      console.log(error);
+    });
 });
 
 bot.on('chosen_inline_result', result => {
-    if (result.result_id !== UNAUTHORIZED_ID) {
-        const { success, city, temp, condition, min, max } = getWeather(result.result_id);
-        if (success) {
-            bot.sendMessage(process.env.GROUP_CHAT_ID, `It's ${temp} in ${city} ${condition}. The high is ${max} and the low is ${min}.`);
-        }
-    }
+  if (result.result_id === UNAUTHORIZED_ID) return;
+  
+  // Fetch the weather data for given city
+  fetchCityInfo(result.result_id)
+    .then(cityInfo => fetchWeatherInfo(cityInfo))
+    .then(weatherInfo => {
+      const message = `${weatherInfo.city}\n\n${weatherInfo.summary}\n${weatherInfo.temperature}\n\nFeels Like: ${weatherInfo.feelsLike}\nHigh: ${weatherInfo.hi}\nLow: ${weatherInfo.lo}`;
+      bot.sendMessage(process.env.GROUP_CHAT_ID, message);
+    })
+    .catch(error => {
+      console.log(error);
+    });
 });
 
 bot.URL = `/bot${TOKEN}`;
