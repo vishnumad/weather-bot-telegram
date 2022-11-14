@@ -1,13 +1,12 @@
-const express = require('express');
-const parser = require('body-parser');
-const bot = require('./bot');
+import express from 'express';
+import { botURL, processUpdate } from './bot/bot.js';
 
 const app = express();
 
-app.use(parser.json());
+app.use(express.json());
 
-app.post(bot.URL, (request, response) => {
-  bot.processUpdate(request.body);
+app.post(botURL, (request, response) => {
+  processUpdate(request.body);
   response.sendStatus(200);
 });
 

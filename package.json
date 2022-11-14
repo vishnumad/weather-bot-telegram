@@ -2,20 +2,21 @@
   "name": "tenki-bot",
   "version": "0.0.1",
   "description": "A weather bot for Telegram with inline queries for autocompleting city names.",
+  "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node -r dotenv/config server.js"
   },
   "dependencies": {
-    "xmlhttprequest": "^1.8.0",
-    "node-telegram-bot-api": "^0.30.0",
-    "body-parser": "^1.19.0",
-    "express": "^4.16.4",
-    "node-fetch": "^2.6.0",
-    "node": "^12.3.1",
-    "lowdb": "^1.0.0"
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "level": "^7.0.0",
+    "node": "^16.0.0",
+    "node-fetch": "^2.6.1",
+    "node-telegram-bot-api": "^0.53.0",
+    "text-table": "^0.2.0"
   },
   "engines": {
-    "node": "12.x"
+    "node": "16.x"
   },
   "repository": {
     "url": "https://glitch.com/edit/#!/tenki-bot-telegram"
@@ -25,5 +26,10 @@
     "TenkiBot",
     "bot",
     "telegram"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node-telegram-bot-api": "0.51.4",
+    "@types/text-table": "0.2.2",
+    "prettier": "2.3.1"
+  }
 }
