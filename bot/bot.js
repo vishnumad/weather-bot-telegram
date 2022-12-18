@@ -10,7 +10,9 @@ const QUERY_CACHE_TIME = 7 * 60 * 60 * 24; // 7 days
 const AUTHORIZED_USERS = process.env.AUTHORIZED_USERS.split(',').map((id) => parseInt(id));
 
 const userToChatMap = new Map();
-const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(BOT_TOKEN, { polling: false, filepath: false });
+
+bot.setWebHook(`${process.env.APP_URL}/bot${process.env.TELEGRAM_TOKEN}`)
 
 bot.onText(/\/ping/, (message) => {
   bot.sendMessage(message.chat.id, "It's stuffy in this server! 😓");
@@ -81,9 +83,3 @@ bot.on('chosen_inline_result', async (result) => {
     console.error('Error getting weather data', e);
   }
 });
-
-export const botURL = `/bot${BOT_TOKEN}`;
-
-export function processUpdate(update) {
-  bot.processUpdate(update);
-}
