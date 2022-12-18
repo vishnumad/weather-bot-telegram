@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: das-wetter-bot
+  namespace: das-wetter-bot
+spec:
+  selector:
+    matchLabels:
+      app: das-wetter-bot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: das-wetter-bot
+    spec:
+      containers:
+        - name: das-wetter-bot
+          image: ABC
+          env:
+            - name: NTBA_FIX_319
+              value: "1"
+          resources:
+            requests:
+              memory: 40Mi
+              cpu: 2m
+            limits:
+              memory: 40Mi
+          ports:
+            - containerPort: 443
