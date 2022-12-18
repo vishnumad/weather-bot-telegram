@@ -10,7 +10,16 @@ const QUERY_CACHE_TIME = 7 * 60 * 60 * 24; // 7 days
 const AUTHORIZED_USERS = process.env.AUTHORIZED_USERS.split(',').map((id) => parseInt(id));
 
 const userToChatMap = new Map();
-const bot = new TelegramBot(BOT_TOKEN, { polling: false, filepath: false });
+const bot = new TelegramBot(
+  BOT_TOKEN,
+  {
+    polling: false,
+    filepath: false,
+    webHook: {
+      port: 443,
+      host: "0.0.0.0"
+    }
+  });
 
 bot.setWebHook(`${process.env.APP_URL}/bot${process.env.TELEGRAM_TOKEN}`)
 
