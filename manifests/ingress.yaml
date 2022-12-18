@@ -13,7 +13,7 @@ spec:
     - dwb.lewischan.dev
     secretName: das-wetter-bot-tls-secret
   rules:
-  - host: wpb.lewischan.dev
+  - host: dwb.lewischan.dev
     http:
       paths:
       - path: /
