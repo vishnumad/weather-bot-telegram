@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: das-wetter-bot
-          image: ABC
+          image: docker.io/lewisgauss/weather-bot-telegram:latest
           env:
             - name: NTBA_FIX_319
               value: "1"
