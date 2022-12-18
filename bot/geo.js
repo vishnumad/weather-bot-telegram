@@ -1,7 +1,4 @@
 import fetch from 'node-fetch';
-import level from 'level';
-
-const locationStore = level('.data/location');
 
 export async function getCitySuggestions(query) {
   const url = `https://api.teleport.org/api/cities/?search=${query}&limit=8`;
@@ -19,15 +16,6 @@ export async function getCitySuggestions(query) {
 }
 
 export async function getLocationInfo(locationID) {
-  let cachedLocation;
-  try {
-    cachedLocation = await locationStore.get(locationID).then((loc) => JSON.parse(loc));
-  } catch (error) {}
-
-  if (cachedLocation) {
-    return cachedLocation;
-  }
-
   const url = `https://api.teleport.org/api/cities/geonameid:${locationID}/`;
   const res = await fetch(url).then((r) => r.json());
   const location = {
@@ -36,7 +24,6 @@ export async function getLocationInfo(locationID) {
     longitude: res.location.latlon.longitude,
   };
 
-  await locationStore.put(locationID, JSON.stringify(location));
   return location;
 }
 
