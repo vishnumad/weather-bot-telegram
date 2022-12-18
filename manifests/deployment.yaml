@@ -23,7 +23,5 @@ spec:
             requests:
               memory: 40Mi
               cpu: 2m
-            limits:
-              memory: 40Mi
           ports:
             - containerPort: 443
