@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
+import getEnv from './environment';
 
 function getApiUrl(latitude, longitude) {
   const url = new URL('https://api.openweathermap.org/data/2.5/onecall');
-  url.searchParams.set('appid', process.env.OWM_API_KEY);
+  url.searchParams.set('appid', getEnv().openWeatherMapApiKey);
   url.searchParams.set('lat', latitude);
   url.searchParams.set('lon', longitude);
   return url;

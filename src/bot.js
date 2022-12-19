@@ -1,18 +1,14 @@
 import TelegramBot from 'node-telegram-bot-api';
-import { getLocationInfo, getCitySuggestions } from './geo';
+import { getAddressInfo } from './geo';
 import { getWeather } from './weather';
 import { formattedMessage } from './formatting';
-import { get as envConfigured } from './environment';
-
-const queryCacheTime = 7 * 60 * 60 * 24; // 7 days
-const userToChatMap = new Map();
+import getEnv from './environment';
 
 function weatherBot() {
   console.info('Starting Das Wetter Bot!');
 
-  const environment = envConfigured();
+  const environment = getEnv();
 
-  const botId = Number(environment.telegramToken.split(':')[0]);
   const authorizedUsers = environment.authorizedUsers.split(',').map((id) => parseInt(id, 10));
 
   const bot =
@@ -31,7 +27,7 @@ function weatherBot() {
         });
 
   if (environment.nodeEnv === 'production') {
-    bot.setWebHook(`${process.env.APP_URL}/bot${process.env.TELEGRAM_TOKEN}`);
+    bot.setWebHook(`${environment.appUrl}/bot${environment.telegramToken}`);
   }
 
   console.info('Web hook / polling configured...');
@@ -39,10 +35,7 @@ function weatherBot() {
   bot.onText(/\/ping/, handlePing);
   bot.onText(/\/start/, handleStart);
   bot.onText(/\/help/, handleHelp);
-
-  bot.on('inline_query', handleInlineQuery);
-  bot.on('message', handleMessage);
-  bot.on('chosen_inline_result', handleChosenInlineResult);
+  bot.onText(/\/weather/, handleWeather);
 
   function handlePing(message) {
     console.info(`Processing ping command for ${message.chat.id}`);
@@ -56,7 +49,7 @@ function weatherBot() {
 
       bot.sendMessage(message.chat.id, 'Unauthorized user.');
     } else {
-      bot.sendMessage(message.chat.id, `Use ${environment.botUsername} <location>`);
+      bot.sendMessage(message.chat.id, `Use /weather${environment.botUsername} <location> to get weather forecast`);
     }
   }
 
@@ -66,62 +59,33 @@ function weatherBot() {
 
       bot.sendMessage(message.chat.id, 'Unauthorized user.');
     } else {
-      bot.sendMessage(message.chat.id, `Use ${environment.botUsername} <location>`);
+      bot.sendMessage(message.chat.id, `Use /weather${environment.botUsername} <location> to get weather forecast`);
     }
   }
 
-  async function handleInlineQuery(message) {
-    console.log('Handling inline query...');
-    console.log(message);
+  async function handleWeather(message) {
+    const input = message.text?.replace('/weather ', '');
 
-    if (message.query.length === 0 || !authorizedUsers.includes(message.from.id)) {
-      console.warn(`Ignore request from ${message.from.id}!`);
+    if (input.length < 1) {
+      bot.sendMessage(message.chat.id, 'Please enter a location.');
       return;
     }
 
     try {
-      userToChatMap.set(message.from.id, message.chat.id);
-      const cities = await getCitySuggestions(message.query);
-      bot.answerInlineQuery(message.id, cities, {
-        cache_time: queryCacheTime,
-        is_personal: false,
+      const address = await getAddressInfo(input);
+
+      console.log(address);
+
+      const { current, today } = await getWeather({
+        latitude: address.geometry.lat,
+        longitude: address.geometry.lng,
       });
-    } catch (e) {
-      console.error('Error getting city suggestions.', e);
-    }
-  }
 
-  async function handleMessage(message) {
-    if (message.via_bot && message.via_bot.id === botId) {
-      console.log('Handling message...');
-      console.log(message);
-      // Hacky way to get chat ID in `chosen_inline_result`
-      // We're assuming that on('message') is called before on('chosen_inline_result')
-      userToChatMap.set(message.from.id, message.chat.id);
-    }
-  }
+      const reply = formattedMessage(address.formattedName, current, today);
 
-  async function handleChosenInlineResult(result) {
-    console.log('Handling chosen inline result...');
-    console.log(result);
-    const chatID = userToChatMap.get(result.from.id);
-
-    if (chatID === undefined) {
-      // `chosen_inline_result` was called before `message` :(
-      console.error('No chat ID for this inline query.');
-      return;
-    }
-
-    userToChatMap.delete(result.from.id);
-
-    try {
-      const location = await getLocationInfo(result.result_id);
-      const { current, today } = await getWeather(location);
-
-      const message = formattedMessage(location, current, today);
-      await bot.sendMessage(chatID, message, { parse_mode: 'HTML' });
-    } catch (e) {
-      console.error('Error getting weather data.', e);
+      bot.sendMessage(message.chat.id, reply, { parse_mode: 'HTML' });
+    } catch (error) {
+      bot.sendMessage(message.chat.id, `Unable to find a valid address for ${input}`);
     }
   }
 }

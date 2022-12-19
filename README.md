@@ -30,4 +30,7 @@ OWM_API_KEY='1234qwertyuiopasdfghjklzxcvbnm12'
 
 # Telegram bot username
 BOT_USERNAME='@the-weather-bot'
+
+# Google Maps API key
+GOOGLE_MAPS_API_KEY='1235asdasd'
 ```

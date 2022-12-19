@@ -48,7 +48,7 @@ function formattedMessage(location, current, today) {
   );
 
   const rows = [
-    location.city,
+    location,
     BLANK,
     pre(getWeatherIcon(current.weather.code).join('\n')),
     BLANK,
