@@ -1,34 +1,37 @@
 {
-  "name": "tenki-bot",
+  "name": "weather-bot-telegram",
   "version": "0.0.1",
   "description": "A weather bot for Telegram with inline queries for autocompleting city names.",
   "type": "module",
-  "scripts": {
-    "start": "node -r dotenv/config server.js"
-  },
-  "dependencies": {
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "node": "^16.0.0",
-    "node-fetch": "^2.6.1",
-    "node-telegram-bot-api": "^0.53.0",
-    "text-table": "^0.2.0"
-  },
-  "engines": {
-    "node": "16.x"
-  },
   "repository": {
     "url": "https://glitch.com/edit/#!/tenki-bot-telegram"
   },
   "license": "MIT",
   "keywords": [
     "TenkiBot",
-    "bot",
-    "telegram"
+    "Das Wetter Bot",
+    "Bot",
+    "Telegram"
   ],
+  "scripts": {
+    "start": "NODE_ENV=development node --experimental-specifier-resolution=node ./src/index.js",
+    "prod-start": "NODE_ENV=production node --experimental-specifier-resolution=node ./src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "node-fetch": "^3.3.0",
+    "node-telegram-bot-api": "^0.60.0",
+    "text-table": "^0.2.0"
+  },
   "devDependencies": {
-    "@types/node-telegram-bot-api": "0.51.4",
+    "@types/node-telegram-bot-api": "0.57.6",
     "@types/text-table": "0.2.2",
-    "prettier": "2.3.1"
-  }
+    "eslint": "^8.30.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "2.8.1"
+  },
+  "packageManager": "yarn@3.3.0"
 }

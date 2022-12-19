@@ -1,6 +1,6 @@
-import { getWeatherIcon } from './icons.js';
-import { kToF, kToC, msToMph, msToKmh } from './weather.js';
 import table from 'text-table';
+import { getWeatherIcon } from './icons';
+import { kToF, kToC, msToMph, msToKmh } from './weather';
 
 const BLANK = ' ';
 const SEPARATOR = '────────────';
@@ -13,7 +13,7 @@ function strong(text) {
   return `<strong>${text}</strong>`;
 }
 
-export function formattedMessage(location, current, today) {
+function formattedMessage(location, current, today) {
   // Feels like
   const feelsLikeF = kToF(current.feels_like, 1);
   const feelsLikeC = kToC(current.feels_like, 1);
@@ -62,3 +62,5 @@ export function formattedMessage(location, current, today) {
 
   return rows.join('\n');
 }
+
+export { pre, strong, formattedMessage };

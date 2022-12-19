@@ -10,15 +10,15 @@ function getApiUrl(latitude, longitude) {
 
 export async function getWeather({ latitude, longitude }) {
   const url = getApiUrl(latitude, longitude).toString();
-  const res = await fetch(url).then((res) => res.json());
+  const jsonResult = await fetch(url).then((res) => res.json());
 
-  const current = res.current;
-  const today = res.daily[0];
+  const { current } = jsonResult;
+  const today = jsonResult.daily[0];
 
   return {
     current: {
       time: current.dt,
-      timezone_offset: res.timezone_offset,
+      timezone_offset: jsonResult.timezone_offset,
       temp: current.temp,
       feels_like: current.feels_like,
       pressure: current.pressure,
@@ -71,7 +71,6 @@ function round(value, precision) {
   if (Number.isInteger(precision)) {
     const shift = 10 ** precision;
     return Math.round(value * shift) / shift;
-  } else {
-    return Math.round(value);
   }
+  return Math.round(value);
 }

@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "airbnb-base",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2022
+  },
+  "env": {
+    "browser": false,
+    "node": true
+  },
+  "rules": {
+    "no-console": "off",
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ]
+  }
+}

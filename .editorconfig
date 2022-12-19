@@ -1,0 +1,19 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+###############################
+# Core EditorConfig Options   #
+###############################
+root = true
+
+# All files
+[*]
+indent_style = space
+indent_size = 2
+charset = utf-8
+max_line_length = 100
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# The JSON files contain newlines inconsistently
+[*.json]
+insert_final_newline = false

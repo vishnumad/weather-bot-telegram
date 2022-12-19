@@ -1,13 +1,14 @@
+/* eslint-disable dot-notation */
 import fetch from 'node-fetch';
 
 export async function getCitySuggestions(query) {
   const url = `https://api.teleport.org/api/cities/?search=${query}&limit=8`;
   const res = await fetch(url).then((r) => r.json());
-  const suggestions = res._embedded['city:search-results'];
+  const suggestions = res['_embedded']['city:search-results'];
 
   return suggestions.map((suggestion) => {
     return {
-      id: `${extractCityID(suggestion._links['city:item'].href)}`,
+      id: `${extractCityID(suggestion['_links']['city:item'].href)}`,
       type: 'article',
       title: suggestion.matching_full_name,
       message_text: `${suggestion.matching_full_name}`,
