@@ -8,6 +8,8 @@ const queryCacheTime = 7 * 60 * 60 * 24; // 7 days
 const userToChatMap = new Map();
 
 function weatherBot() {
+  console.info('Starting Das Wetter Bot!');
+
   const environment = envConfigured();
 
   const botId = Number(environment.telegramToken.split(':')[0]);
@@ -32,6 +34,8 @@ function weatherBot() {
     bot.setWebHook(`${process.env.APP_URL}/bot${process.env.TELEGRAM_TOKEN}`);
   }
 
+  console.info('Web hook / polling configured...');
+
   bot.onText(/\/ping/, handlePing);
   bot.onText(/\/start/, handleStart);
   bot.onText(/\/help/, handleHelp);
@@ -41,11 +45,15 @@ function weatherBot() {
   bot.on('chosen_inline_result', handleChosenInlineResult);
 
   function handlePing(message) {
+    console.info(`Processing ping command for ${message.chat.id}`);
+
     bot.sendMessage(message.chat.id, 'This server is better than HWS! 🤯');
   }
 
   function handleStart(message) {
-    if (!authorizedUsers.includes(message.from.id)) {
+    if (!authorizedUsers.includes(message.chat.id)) {
+      console.warn(`Ignore request from ${message.chat.id}!`);
+
       bot.sendMessage(message.chat.id, 'Unauthorized user.');
     } else {
       bot.sendMessage(message.chat.id, `Use ${environment.botUsername} <location>`);
@@ -53,7 +61,9 @@ function weatherBot() {
   }
 
   function handleHelp(message) {
-    if (!authorizedUsers.includes(message.from.id)) {
+    if (!authorizedUsers.includes(message.chat.id)) {
+      console.warn(`Ignore request from ${message.chat.id}!`);
+
       bot.sendMessage(message.chat.id, 'Unauthorized user.');
     } else {
       bot.sendMessage(message.chat.id, `Use ${environment.botUsername} <location>`);
@@ -61,11 +71,16 @@ function weatherBot() {
   }
 
   async function handleInlineQuery(message) {
+    console.log('Handling inline query...');
+    console.log(message);
+
     if (message.query.length === 0 || !authorizedUsers.includes(message.from.id)) {
+      console.warn(`Ignore request from ${message.from.id}!`);
       return;
     }
 
     try {
+      userToChatMap.set(message.from.id, message.chat.id);
       const cities = await getCitySuggestions(message.query);
       bot.answerInlineQuery(message.id, cities, {
         cache_time: queryCacheTime,
@@ -78,6 +93,8 @@ function weatherBot() {
 
   async function handleMessage(message) {
     if (message.via_bot && message.via_bot.id === botId) {
+      console.log('Handling message...');
+      console.log(message);
       // Hacky way to get chat ID in `chosen_inline_result`
       // We're assuming that on('message') is called before on('chosen_inline_result')
       userToChatMap.set(message.from.id, message.chat.id);
@@ -85,11 +102,10 @@ function weatherBot() {
   }
 
   async function handleChosenInlineResult(result) {
-    if (!authorizedUsers.includes(result.from.id)) {
-      return;
-    }
-
+    console.log('Handling chosen inline result...');
+    console.log(result);
     const chatID = userToChatMap.get(result.from.id);
+
     if (chatID === undefined) {
       // `chosen_inline_result` was called before `message` :(
       console.error('No chat ID for this inline query.');
