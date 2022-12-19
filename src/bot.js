@@ -64,7 +64,7 @@ function weatherBot() {
   }
 
   async function handleWeather(message) {
-    const input = message.text?.replace('/weather ', '');
+    const input = message.text?.replace('/weather ', '').replace(`/weather${environment.botUsername} `, '');
 
     if (input.length < 1) {
       bot.sendMessage(message.chat.id, 'Please enter a location.');
