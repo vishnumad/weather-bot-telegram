@@ -3,6 +3,7 @@ import { getLocationInfo, getCitySuggestions } from './geo.js';
 import { getWeather } from './weather.js';
 import { formattedMessage } from './formatting.js';
 
+const BOT_USERNAME = process.env.BOT_USERNAME;
 const BOT_TOKEN = process.env.TELEGRAM_TOKEN;
 const BOT_ID = Number(BOT_TOKEN.split(':')[0]);
 const QUERY_CACHE_TIME = 7 * 60 * 60 * 24; // 7 days
@@ -31,7 +32,7 @@ bot.onText(/\/start/, (message) => {
   if (!AUTHORIZED_USERS.includes(message.from.id)) {
     bot.sendMessage(message.chat.id, 'Unauthorized user');
   } else {
-    bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
+    bot.sendMessage(message.chat.id, `Use ${BOT_USERNAME} <location>`);
   }
 });
 
@@ -39,7 +40,7 @@ bot.onText(/\/help/, (message) => {
   if (!AUTHORIZED_USERS.includes(message.from.id)) {
     bot.sendMessage(message.chat.id, 'Unauthorized user');
   } else {
-    bot.sendMessage(message.chat.id, 'Use @tenki_bot <location>');
+    bot.sendMessage(message.chat.id, `Use ${BOT_USERNAME} <location>`);
   }
 });
 

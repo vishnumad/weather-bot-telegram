@@ -19,9 +19,13 @@ spec:
           env:
             - name: NTBA_FIX_319
               value: "1"
+            - name: BOT_USERNAME
+              value: "@daswetter_bot"
           resources:
             requests:
-              memory: 40Mi
-              cpu: 2m
+              memory: 70Mi
+              cpu: 1m
+            limits:
+              memory: 70Mi
           ports:
             - containerPort: 443
