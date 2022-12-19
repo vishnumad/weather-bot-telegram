@@ -23,9 +23,9 @@ spec:
               value: "@daswetter_bot"
           resources:
             requests:
-              memory: 70Mi
+              memory: 100Mi
               cpu: 1m
             limits:
-              memory: 70Mi
+              memory: 100Mi
           ports:
             - containerPort: 443
