@@ -4,6 +4,6 @@ ENV NODE_ENV=development
 WORKDIR /source
 
 COPY . .
-RUN npm install
+RUN yarn install
 
 CMD [ "sh", "-c", "yarn prod-start" ]
