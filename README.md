@@ -1,29 +1,33 @@
-# weather-bot-telegram
+# Telegram Weather Bot
 
-A weather bot for Telegram built using [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api). Features inline queries for autocompleting city names. Remix for personal use.
+*A fork from [vishnumad/weather-bot-telegram](https://github.com/vishnumad/weather-bot-telegram)*
 
-City autocomplete results from [Teleport](https://developers.teleport.org/api/).
+[![Build Docker image and deploy to GKE](https://github.com/lwschan/telegram-weather-bot/actions/workflows/build-deploy-gke.yml/badge.svg)](https://github.com/lwschan/telegram-weather-bot/actions/workflows/build-deploy-gke.yml)
 
-Weather data from [OpenWeatherMap](https://openweathermap.org/).
+A weather bot for Telegram built using:
 
----
+- [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api).
+- City autocomplete results from [Teleport](https://developers.teleport.org/api/).
+- Weather data from [OpenWeatherMap](https://openweathermap.org/).
 
-### server.js
+## Node version
 
-> Contains server code
+If you wish to modify the NodeJs version, you need go change it in `.nvmrc`.
 
-### bot.js
+## .env configurations
 
-> Contains bot code
+```shell
+NTBA_FIX_319=1
 
-### .env
+# Telegram bot token
+TELEGRAM_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-A1A'
 
-> Environmental variables
+# Authorized telegram user id's separated by comma ex. 1234,5678,4321
+AUTHORIZED_USERS='123456678,098765432,67890123'
 
-- TELEGRAM_TOKEN - Telegram bot token
+# Open Weather API Key
+OWM_API_KEY='1234qwertyuiopasdfghjklzxcvbnm12'
 
-- AUTHORIZED_USERS - Telegram user ids separated by comma; ex. `'1234,5678,4321'`
-
-- OWM_API_KEY - API Key from OpenWeatherMap
-
-- NTBA_FIX_319=1
+# Telegram bot username
+BOT_USERNAME='@the-weather-bot'
+```
