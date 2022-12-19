@@ -6,9 +6,9 @@
 
 A weather bot for Telegram built using:
 
-- [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api).
-- City autocomplete results from [Teleport](https://developers.teleport.org/api/).
-- Weather data from [OpenWeatherMap](https://openweathermap.org/).
+- [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
+- Geocode address based on input from [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding)
+- Weather data from [OpenWeatherMap](https://openweathermap.org/)
 
 ## Node version
 
