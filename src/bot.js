@@ -39,7 +39,12 @@ function weatherBot() {
   bot.onText(/\/ping/, handlePing);
   bot.onText(/\/start/, handleStart);
   bot.onText(/\/help/, handleHelp);
-  bot.onText(/\/w$/, handleWeather);
+
+  const wCommandRegex = `/(w|w${environment.botUsername})$`;
+  console.log(new RegExp(wCommandRegex));
+
+  bot.onText(new RegExp(wCommandRegex), handleWeather);
+
   bot.onText(/\/wo/, handleWeatherForOtherLocation);
   bot.onText(/\/setlocation/, handleSetLocation);
   bot.onText(/\/deletelocation/, handleDeleteLocation);
