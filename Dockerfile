@@ -4,6 +4,6 @@ ENV NODE_ENV=development
 WORKDIR /source
 
 COPY . .
-RUN yarn install
+RUN yarn workspaces focus --production
 
 CMD [ "sh", "-c", "yarn prod-start" ]
