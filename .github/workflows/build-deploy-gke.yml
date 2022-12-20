@@ -129,6 +129,8 @@ jobs:
           yq -i '.spec.template.spec.containers[0].env += { "name": "OWM_API_KEY", "value": "${{ secrets.OWM_API_KEY }}" }' './manifests/deployment.yaml'
           yq -i '.spec.template.spec.containers[0].env += { "name": "APP_URL", "value": "${{ secrets.APP_URL }}" }' './manifests/deployment.yaml'
           yq -i '.spec.template.spec.containers[0].env += { "name": "GOOGLE_MAPS_API_KEY", "value": "${{ secrets.GOOGLE_MAPS_API_KEY }}" }' './manifests/deployment.yaml'
+          yq -i '.spec.template.spec.containers[0].env += { "name": "REDIS_URL", "value": "${{ secrets.REDIS_URL }}" }' './manifests/deployment.yaml'
+          yq -i '.spec.template.spec.containers[0].env += { "name": "REDIS_PASSWORD", "value": "${{ secrets.REDIS_PASSWORD }}" }' './manifests/deployment.yaml'
 
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
