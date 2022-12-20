@@ -21,6 +21,8 @@ spec:
               value: "1"
             - name: BOT_USERNAME
               value: "@daswetter_bot"
+            - name: NODE_ENV
+              value: "production"
           resources:
             requests:
               memory: 200Mi
