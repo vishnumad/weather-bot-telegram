@@ -10,6 +10,8 @@ const get = () => ({
   botUsername: process.env.BOT_USERNAME,
   googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
   appUrl: process.env.APP_URL,
+  redisUrl: process.env.REDIS_URL,
+  redisPassword: process.env.REDIS_PASSWORD,
 });
 
 export { configure, get };
