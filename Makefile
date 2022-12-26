@@ -28,5 +28,6 @@ build-docker:
 		docker build . -t telegram-weather-bot:$(version)
 
 .PHONY: start-redis
+start-redis:
 		@echo "Starting localhost redis in Docker..."
 		docker run --rm --name local-redis -p 6379:6379 -d redis
