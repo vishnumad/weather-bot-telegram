@@ -2157,6 +2157,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"telegram-weather-bot@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "telegram-weather-bot@workspace:."
+  dependencies:
+    "@types/node-telegram-bot-api": 0.57.6
+    "@types/text-table": 0.2.2
+    dotenv: ^16.0.3
+    eslint: ^8.30.0
+    eslint-config-airbnb-base: ^15.0.0
+    eslint-config-prettier: ^8.5.0
+    eslint-plugin-import: ^2.26.0
+    eslint-plugin-prettier: ^4.2.1
+    node-fetch: ^3.3.0
+    node-telegram-bot-api: ^0.60.0
+    prettier: 2.8.1
+    redis: ^4.5.1
+    text-table: ^0.2.0
+  languageName: unknown
+  linkType: soft
+
 "text-table@npm:^0.2.0":
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
@@ -2265,26 +2285,6 @@ __metadata:
   checksum: c431df0bedf2088b227a4e051e0ff4ca54df2c114096b0c01e1cbaadb021c30a04d7dd5b41ab277bcd51246ca135bf931d4c4c796ecae7a4fef6d744ecef36ea
   languageName: node
   linkType: hard
-
-"weather-bot-telegram@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "weather-bot-telegram@workspace:."
-  dependencies:
-    "@types/node-telegram-bot-api": 0.57.6
-    "@types/text-table": 0.2.2
-    dotenv: ^16.0.3
-    eslint: ^8.30.0
-    eslint-config-airbnb-base: ^15.0.0
-    eslint-config-prettier: ^8.5.0
-    eslint-plugin-import: ^2.26.0
-    eslint-plugin-prettier: ^4.2.1
-    node-fetch: ^3.3.0
-    node-telegram-bot-api: ^0.60.0
-    prettier: 2.8.1
-    redis: ^4.5.1
-    text-table: ^0.2.0
-  languageName: unknown
-  linkType: soft
 
 "web-streams-polyfill@npm:^3.0.3":
   version: 3.2.1
