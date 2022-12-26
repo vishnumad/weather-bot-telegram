@@ -41,8 +41,6 @@ function weatherBot() {
   bot.onText(/\/help/, handleHelp);
 
   const wCommandRegex = `/(w|w${environment.botUsername})$`;
-  console.log(new RegExp(wCommandRegex));
-
   bot.onText(new RegExp(wCommandRegex), handleWeather);
 
   bot.onText(/\/wo/, handleWeatherForOtherLocation);
