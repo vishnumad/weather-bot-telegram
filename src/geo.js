@@ -7,14 +7,12 @@ async function getCitySuggestions(query) {
   const res = await fetch(url).then((r) => r.json());
   const suggestions = res['_embedded']['city:search-results'];
 
-  return suggestions.map((suggestion) => {
-    return {
-      id: `${extractCityID(suggestion['_links']['city:item'].href)}`,
-      type: 'article',
-      title: suggestion.matching_full_name,
-      message_text: `${suggestion.matching_full_name}`,
-    };
-  });
+  return suggestions.map((suggestion) => ({
+    id: `${extractCityID(suggestion['_links']['city:item'].href)}`,
+    type: 'article',
+    title: suggestion.matching_full_name,
+    message_text: `${suggestion.matching_full_name}`,
+  }));
 }
 
 async function getLocationInfo(locationID) {
@@ -31,7 +29,9 @@ async function getLocationInfo(locationID) {
 
 async function getAddressInfo(input) {
   try {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${input}&key=${getEnv().googleMapsApiKey}`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${input}&key=${
+      getEnv().googleMapsApiKey
+    }`;
 
     const response = await fetch(url);
 
