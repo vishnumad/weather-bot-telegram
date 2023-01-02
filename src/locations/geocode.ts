@@ -1,6 +1,6 @@
 import fetch from '../fetch';
-import getEnv from '../environment';
-import GoogleMapsGeocodeResponse from './GoogleMapsGeocodeResponse';
+import getEnv from '../utils/environment';
+import { GoogleMapsGeocodeResponse } from './types';
 
 type GeocodeReturn = {
   formattedName: string;

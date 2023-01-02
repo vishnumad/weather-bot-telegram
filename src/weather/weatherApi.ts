@@ -1,6 +1,6 @@
-import fetch from './fetch';
-import getEnv from './environment';
-import CurrentWeather from './CurrentWeather';
+import fetch from '../fetch';
+import getEnv from '../utils/environment';
+import { CurrentWeather } from './types';
 
 function getApiUrl(latitude: number, longitude: number) {
   const url = new URL('https://api.openweathermap.org/data/2.5/onecall');

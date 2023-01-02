@@ -1,4 +1,4 @@
-import { configure as configureEnv } from './environment';
+import { configure as configureEnv } from './utils/environment';
 import bot from './bot';
 
 configureEnv();

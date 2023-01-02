@@ -1,4 +1,4 @@
-const sampleResponse = {
+const sampleGeocodeReponse = {
   results: [
     {
       address_components: [
@@ -43,6 +43,6 @@ const sampleResponse = {
   status: 'OK',
 };
 
-type GoogleMapsGeocodeResponse = typeof sampleResponse;
+type GoogleMapsGeocodeResponse = typeof sampleGeocodeReponse;
 
-export default GoogleMapsGeocodeResponse;
+export type { GoogleMapsGeocodeResponse };

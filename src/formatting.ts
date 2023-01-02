@@ -1,6 +1,6 @@
 import table from 'text-table';
-import { getWeatherIcon } from './icons';
-import { kToF, kToC, msToMph, msToKmh } from './weather';
+import { getWeatherIcon } from './utils/icons';
+import { kToF, kToC, msToMph, msToKmh } from './weather/weatherApi';
 
 const BLANK = ' ';
 const SEPARATOR = '────────────';

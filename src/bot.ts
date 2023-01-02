@@ -1,10 +1,10 @@
 import TelegramBot, { Message } from 'node-telegram-bot-api';
-import getAddressInfo from './location/geocode';
-import { getWeather } from './weather';
+import getAddressInfo from './locations/geocode';
+import { getWeather } from './weather/weatherApi';
 import { formattedMessage } from './formatting';
-import getEnv from './environment';
-import redisClient from './redisClient';
-import { getUserIdRedisKey } from './utils';
+import getEnv from './utils/environment';
+import redisClient from './redis/redisClient';
+import { getUserIdRedisKey } from './redis/keys';
 
 function weatherBot() {
   console.info('Starting Das Wetter Bot!');

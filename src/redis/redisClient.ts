@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import getEnv from './environment';
+import getEnv from '../utils/environment';
 
 type IRedisClient = ReturnType<typeof createClient>;
 

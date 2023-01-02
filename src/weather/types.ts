@@ -1,4 +1,4 @@
-const sampleResponse = {
+const sampleCurrentWeatherResponse = {
   lat: 1.2864,
   lon: 103.8539,
   timezone: 'Asia/Singapore',
@@ -101,6 +101,6 @@ const sampleResponse = {
   ],
 };
 
-type CurrentWeather = typeof sampleResponse;
+type CurrentWeather = typeof sampleCurrentWeatherResponse;
 
-export default CurrentWeather;
+export type { CurrentWeather };

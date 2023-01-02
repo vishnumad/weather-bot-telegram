@@ -25,9 +25,9 @@ spec:
               value: "production"
           resources:
             requests:
-              memory: 125Mi
+              memory: 50Mi
               cpu: 1m
             limits:
-              memory: 125Mi
+              memory: 50Mi
           ports:
             - containerPort: 443
