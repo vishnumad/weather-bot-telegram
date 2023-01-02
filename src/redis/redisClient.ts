@@ -17,7 +17,7 @@ const create = (): IRedisClient => {
     client = createClient();
   }
 
-  client.on('error', (error: typeof Error) => {
+  client.on('error', (error: Error) => {
     console.error(error);
   });
 
