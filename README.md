@@ -22,7 +22,7 @@ NTBA_FIX_319=1
 # Telegram bot token
 TELEGRAM_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-A1A'
 
-# Authorized telegram user id's separated by comma ex. 1234,5678,4321
+# Authorized telegram user id or group id separated by comma ex. 1234,5678,4321
 AUTHORIZED_USERS='123456678,098765432,67890123'
 
 # Open Weather API Key
@@ -35,7 +35,7 @@ BOT_USERNAME='@the-weather-bot'
 GOOGLE_MAPS_API_KEY='1235asdasd'
 
 # Redis
-REDIS_URL='redis://something.service.local:6379'
+REDIS_URL='redis://redis-cluster.service.local:6379'
 REDIS_PASSWORD='somepassword'
 ```
 
@@ -56,3 +56,5 @@ If you do not have one installed, you can run one using Docker.
 
 > make start-redis
 ```
+
+Set the environment variable `REDIS_URL` to `redis://127.0.0.1:6379`.

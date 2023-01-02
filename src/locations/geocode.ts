@@ -1,8 +1,8 @@
 import fetch from '../fetch';
-import getEnv from '../utils/environment';
+import { getEnvVars } from '../utils/environment';
 import { GoogleMapsGeocodeResponse } from './types';
 
-type GeocodeReturn = {
+type GeocodeResponse = {
   formattedName: string;
   geometry: {
     lat: number;
@@ -10,11 +10,11 @@ type GeocodeReturn = {
   };
 };
 
-async function geocode(input: string): Promise<GeocodeReturn> {
+async function geocode(input: string): Promise<GeocodeResponse> {
   try {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${input}&key=${
-      getEnv().googleMapsApiKey
-    }`;
+    const googleMapsApiKey = getEnvVars().googleMapsApiKey;
+
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${input}&key=${googleMapsApiKey}`;
 
     const response = await fetch.get<GoogleMapsGeocodeResponse>(url);
 

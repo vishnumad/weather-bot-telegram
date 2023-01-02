@@ -6,43 +6,14 @@ import getEnv from './utils/environment';
 import redisClient from './redis/redisClient';
 import { getUserIdRedisKey } from './redis/keys';
 
-function weatherBot() {
+function weatherBot(bot: TelegramBot) {
   console.info('Starting Das Wetter Bot!');
 
   const environment = getEnv();
 
-  if (environment.telegramToken == null) {
-    throw new Error('Please set env var TELEGRAM_TOKEN');
-  }
-
-  if (environment.authorizedUsers == null) {
-    throw new Error('Please set env var AUTHORIZED_USERS');
-  }
-
   const authorizedUsers = environment.authorizedUsers.split(',').map((id) => parseInt(id, 10));
 
-  const bot =
-    environment.nodeEnv === 'production'
-      ? new TelegramBot(environment.telegramToken, {
-          polling: false,
-          filepath: false,
-          webHook: {
-            port: 443,
-            host: '0.0.0.0',
-          },
-        })
-      : new TelegramBot(environment.telegramToken, {
-          polling: true,
-          filepath: false,
-        });
-
   const redis = redisClient.create();
-
-  if (environment.nodeEnv === 'production') {
-    bot.setWebHook(`${environment.appUrl}/bot${environment.telegramToken}`);
-  }
-
-  console.info('Web hook / polling configured...');
 
   bot.onText(/\/ping/, handlePing);
   bot.onText(/\/start/, handleStart);
