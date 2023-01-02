@@ -2,8 +2,20 @@ import dotenv from 'dotenv';
 
 const configure = () => dotenv.config();
 
-const get = () => ({
-  nodeEnv: process.env.NODE_ENV,
+type Environment = {
+  nodeEnv: string;
+  telegramToken: string | undefined;
+  authorizedUsers: string | undefined;
+  openWeatherMapApiKey: string | undefined;
+  botUsername: string | undefined;
+  googleMapsApiKey: string | undefined;
+  appUrl: string | undefined;
+  redisUrl: string | undefined;
+  redisPassword: string | undefined;
+};
+
+const get = (): Environment => ({
+  nodeEnv: process.env.NODE_ENV || 'development',
   telegramToken: process.env.TELEGRAM_TOKEN,
   authorizedUsers: process.env.AUTHORIZED_USERS,
   openWeatherMapApiKey: process.env.OWM_API_KEY,

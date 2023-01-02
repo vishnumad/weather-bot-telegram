@@ -5,15 +5,16 @@ import { kToF, kToC, msToMph, msToKmh } from './weather';
 const BLANK = ' ';
 const SEPARATOR = '────────────';
 
-function pre(text) {
+function pre(text: string) {
   return `<pre>${text}</pre>`;
 }
 
-function strong(text) {
+function strong(text: string) {
   return `<strong>${text}</strong>`;
 }
 
-function formattedMessage(location, current, today) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function formattedMessage(location: string, current: any, today: any) {
   // Feels like
   const feelsLikeF = kToF(current.feels_like, 1);
   const feelsLikeC = kToC(current.feels_like, 1);
@@ -44,7 +45,7 @@ function formattedMessage(location, current, today) {
       ['High', `${hiF}F`, `${hiC}C`],
       ['Low', `${loF}F`, `${loC}C`],
     ],
-    { align: ['l', 'r', 'r'] }
+    { align: ['l', 'r', 'r'] },
   );
 
   const rows = [

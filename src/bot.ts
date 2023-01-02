@@ -1,5 +1,5 @@
-import TelegramBot from 'node-telegram-bot-api';
-import { getAddressInfo } from './geo';
+import TelegramBot, { Message } from 'node-telegram-bot-api';
+import getAddressInfo from './location/geocode';
 import { getWeather } from './weather';
 import { formattedMessage } from './formatting';
 import getEnv from './environment';
@@ -10,6 +10,14 @@ function weatherBot() {
   console.info('Starting Das Wetter Bot!');
 
   const environment = getEnv();
+
+  if (environment.telegramToken == null) {
+    throw new Error('Please set env var TELEGRAM_TOKEN');
+  }
+
+  if (environment.authorizedUsers == null) {
+    throw new Error('Please set env var AUTHORIZED_USERS');
+  }
 
   const authorizedUsers = environment.authorizedUsers.split(',').map((id) => parseInt(id, 10));
 
@@ -28,7 +36,7 @@ function weatherBot() {
           filepath: false,
         });
 
-  const redis = redisClient();
+  const redis = redisClient.create();
 
   if (environment.nodeEnv === 'production') {
     bot.setWebHook(`${environment.appUrl}/bot${environment.telegramToken}`);
@@ -47,13 +55,13 @@ function weatherBot() {
   bot.onText(/\/setlocation/, handleSetLocation);
   bot.onText(/\/deletelocation/, handleDeleteLocation);
 
-  function handlePing(message) {
+  function handlePing(message: Message) {
     console.info(`Processing ping command for ${message.chat.id}`);
 
     bot.sendMessage(message.chat.id, 'This server is better than HWS! 🤯');
   }
 
-  function handleStart(message) {
+  function handleStart(message: Message) {
     if (!authorizedUsers.includes(message.chat.id)) {
       console.warn(`Ignore start request from ${message.chat.id}!`);
 
@@ -61,12 +69,12 @@ function weatherBot() {
     } else {
       bot.sendMessage(
         message.chat.id,
-        `Use /help${environment.botUsername} for information on how to use this bot.`
+        `Use /help${environment.botUsername} for information on how to use this bot.`,
       );
     }
   }
 
-  function handleHelp(message) {
+  function handleHelp(message: Message) {
     if (!authorizedUsers.includes(message.chat.id)) {
       console.warn(`Ignore help request from ${message.chat.id}!`);
 
@@ -90,7 +98,7 @@ function weatherBot() {
     });
   }
 
-  async function handleWeather(message) {
+  async function handleWeather(message: Message) {
     if (!authorizedUsers.includes(message.chat.id)) {
       console.warn(`Ignore weather request from ${message.chat.id}!`);
 
@@ -98,14 +106,19 @@ function weatherBot() {
     }
 
     try {
-      const userId = message.from.id;
+      const userId = message.from?.id;
+
+      if (userId == null) {
+        return;
+      }
+
       const userIdRedisKey = getUserIdRedisKey(userId);
       const address = await redis.get(userIdRedisKey);
 
       if (address == null) {
         bot.sendMessage(
           message.chat.id,
-          `Please set a default location using /setlocation${environment.botUsername}.`
+          `Please set a default location using /setlocation${environment.botUsername}.`,
         );
 
         return;
@@ -126,7 +139,7 @@ function weatherBot() {
     }
   }
 
-  async function handleWeatherForOtherLocation(message) {
+  async function handleWeatherForOtherLocation(message: Message) {
     if (!authorizedUsers.includes(message.chat.id)) {
       console.warn(`Ignore weather request from ${message.chat.id}!`);
 
@@ -138,7 +151,7 @@ function weatherBot() {
       .replace(`/wo${environment.botUsername}`, '')
       .trim();
 
-    if (input.length < 1) {
+    if (input == null || input.length < 1) {
       bot.sendMessage(message.chat.id, 'Please enter a location.');
       return;
     }
@@ -161,7 +174,7 @@ function weatherBot() {
     }
   }
 
-  async function handleSetLocation(message) {
+  async function handleSetLocation(message: Message) {
     if (!authorizedUsers.includes(message.chat.id)) {
       console.warn(`Ignore set location from ${message.chat.id}!`);
 
@@ -169,14 +182,18 @@ function weatherBot() {
     }
 
     const chatId = message.chat.id;
-    const userId = message.from.id;
+    const userId = message.from?.id;
+
+    if (userId == null) {
+      return;
+    }
 
     const input = message.text
       ?.replace('/setlocation', '')
       .replace(`/setlocation${environment.botUsername}`, '')
       .trim();
 
-    if (input.length < 1) {
+    if (input == null || input.length < 1) {
       bot.sendMessage(message.chat.id, 'Please enter a location.');
       return;
     }
@@ -195,7 +212,7 @@ function weatherBot() {
     }
   }
 
-  async function handleDeleteLocation(message) {
+  async function handleDeleteLocation(message: Message) {
     if (!authorizedUsers.includes(message.chat.id)) {
       console.warn(`Ignore set location from ${message.chat.id}!`);
 
@@ -203,7 +220,12 @@ function weatherBot() {
     }
 
     const chatId = message.chat.id;
-    const userId = message.from.id;
+    const userId = message.from?.id;
+
+    if (userId == null) {
+      return;
+    }
+
     const userRedisKey = getUserIdRedisKey(userId);
 
     const addressSaved = await redis.get(userRedisKey);

@@ -38,3 +38,21 @@ GOOGLE_MAPS_API_KEY='1235asdasd'
 REDIS_URL='redis://something.service.local:6379'
 REDIS_PASSWORD='somepassword'
 ```
+
+## Local development
+
+To run this bot on your localhost, you need to have redis installed and exposed via the default port of 6379.
+
+If you do not have one installed, you can run one using Docker.
+
+```shell
+# Without GNU Make
+> docker pull redis
+
+> docker run --rm --name local-redis -p 6379:6379 -d redis
+
+# With GNU Make
+> make pull-redis
+
+> make start-redis
+```

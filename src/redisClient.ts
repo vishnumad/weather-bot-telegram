@@ -1,8 +1,10 @@
 import { createClient } from 'redis';
 import getEnv from './environment';
 
-const create = () => {
-  let client;
+type IRedisClient = ReturnType<typeof createClient>;
+
+const create = (): IRedisClient => {
+  let client: IRedisClient;
 
   const environment = getEnv();
 
@@ -15,7 +17,7 @@ const create = () => {
     client = createClient();
   }
 
-  client.on('error', (error) => {
+  client.on('error', (error: typeof Error) => {
     console.error(error);
   });
 
@@ -24,4 +26,6 @@ const create = () => {
   return client;
 };
 
-export default create;
+export default {
+  create,
+};

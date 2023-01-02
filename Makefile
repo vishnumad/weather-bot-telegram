@@ -27,6 +27,11 @@ build-docker:
 		@echo "Building docker image"
 		docker build . -t telegram-weather-bot:$(version)
 
+.PHONY: pull-redis
+start-redis:
+		@echo "Pulling the latest redis Docker image..."
+		docker pull redis
+
 .PHONY: start-redis
 start-redis:
 		@echo "Starting localhost redis in Docker..."

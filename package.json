@@ -16,9 +16,12 @@
     "Das Wetter Bot"
   ],
   "type": "module",
+  "main": "./src/index.ts",
   "scripts": {
-    "start": "NODE_ENV=development node --experimental-specifier-resolution=node ./src/index.js",
-    "prod-start": "node --experimental-specifier-resolution=node ./src/index.js"
+    "build": "tsc",
+    "debug": "NODE_ENV=development TS_NODE_PROJECT=./tsconfig.json ts-node ./src/index.ts",
+    "prettier": "prettier --config .prettierrc.json --write \"src/**/*{.ts,.js}\"",
+    "start": "NODE_ENV=production node --experimental-specifier-resolution=node ./build/index.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
@@ -28,14 +31,21 @@
     "text-table": "^0.2.0"
   },
   "devDependencies": {
+    "@tsconfig/node18": "^1.0.1",
+    "@types/node": "^18.11.18",
     "@types/node-telegram-bot-api": "0.57.6",
     "@types/text-table": "0.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
     "eslint": "^8.30.0",
-    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "2.8.1"
+    "prettier": "2.8.1",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.2",
+    "typescript": "^4.9.4"
   },
   "packageManager": "yarn@3.3.0"
 }
