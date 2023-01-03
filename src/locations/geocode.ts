@@ -10,7 +10,7 @@ type GeocodeResponse = {
   };
 };
 
-async function geocode(input: string): Promise<GeocodeResponse> {
+const geocode = async (input: string): Promise<GeocodeResponse> => {
   try {
     const googleMapsApiKey = getEnvVars().googleMapsApiKey;
 
@@ -33,6 +33,6 @@ async function geocode(input: string): Promise<GeocodeResponse> {
 
     throw error;
   }
-}
+};
 
 export default geocode;

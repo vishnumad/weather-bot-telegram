@@ -6,7 +6,7 @@ import getEnv from './utils/environment';
 import redisClient from './redis/redisClient';
 import { getUserIdRedisKey } from './redis/keys';
 
-function weatherBot(bot: TelegramBot) {
+async function weatherBot(bot: TelegramBot): Promise<void> {
   console.info('Starting Das Wetter Bot!');
 
   const environment = getEnv();
@@ -15,11 +15,13 @@ function weatherBot(bot: TelegramBot) {
 
   const redis = redisClient.create();
 
+  const botUsername = (await bot.getMe()).username ?? '';
+
   bot.onText(/\/ping/, handlePing);
   bot.onText(/\/start/, handleStart);
   bot.onText(/\/help/, handleHelp);
 
-  const wCommandRegex = `/(w|w${environment.botUsername})$`;
+  const wCommandRegex = `/(w|w${botUsername})$`;
   bot.onText(new RegExp(wCommandRegex), handleWeather);
 
   bot.onText(/\/wo/, handleWeatherForOtherLocation);
@@ -40,7 +42,7 @@ function weatherBot(bot: TelegramBot) {
     } else {
       bot.sendMessage(
         message.chat.id,
-        `Use /help${environment.botUsername} for information on how to use this bot.`,
+        `Use /help${botUsername} for information on how to use this bot.`,
       );
     }
   }
@@ -89,7 +91,7 @@ function weatherBot(bot: TelegramBot) {
       if (address == null) {
         bot.sendMessage(
           message.chat.id,
-          `Please set a default location using /setlocation${environment.botUsername}.`,
+          `Please set a default location using /setlocation${botUsername}.`,
         );
 
         return;
@@ -117,10 +119,7 @@ function weatherBot(bot: TelegramBot) {
       bot.sendMessage(message.chat.id, 'Unauthorized user.');
     }
 
-    const input = message.text
-      ?.replace('/wo', '')
-      .replace(`/wo${environment.botUsername}`, '')
-      .trim();
+    const input = message.text?.replace('/wo', '').replace(`/wo${botUsername}`, '').trim();
 
     if (input == null || input.length < 1) {
       bot.sendMessage(message.chat.id, 'Please enter a location.');
@@ -161,7 +160,7 @@ function weatherBot(bot: TelegramBot) {
 
     const input = message.text
       ?.replace('/setlocation', '')
-      .replace(`/setlocation${environment.botUsername}`, '')
+      .replace(`/setlocation${botUsername}`, '')
       .trim();
 
     if (input == null || input.length < 1) {

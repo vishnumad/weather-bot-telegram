@@ -4,7 +4,7 @@ import {
   isProduction,
   throwMissingEnvVarError,
 } from './utils/environment';
-import bot from './bot';
+import weatherBot from './weatherBot';
 import TelegramBot from 'node-telegram-bot-api';
 
 const setBotWebHook = (telegramBot: TelegramBot): void => {
@@ -23,7 +23,7 @@ const setBotWebHook = (telegramBot: TelegramBot): void => {
   console.info(`Configured webhook URL ${environment.appUrl} for telegram bot...`);
 };
 
-const initialize = (): void => {
+const initialize = async (): Promise<void> => {
   const environment = getEnvVars();
 
   const telegramBot = isProduction()
@@ -42,7 +42,7 @@ const initialize = (): void => {
 
   setBotWebHook(telegramBot);
 
-  bot(telegramBot);
+  weatherBot(telegramBot);
 };
 
 configureEnvVars();
