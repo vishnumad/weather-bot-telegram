@@ -14,9 +14,5 @@ end_of_line = lf
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-# The JSON files contain newlines inconsistently
-[*.json]
-insert_final_newline = false
-
 [Makefile]
 indent_style = tab
