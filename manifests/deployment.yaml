@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: das-wetter-bot
-  namespace: das-wetter-bot
+  namespace: telegram-weather-bot-temp
 spec:
   selector:
     matchLabels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: das-wetter-bot
-          image: docker.io/lewisgauss/telegram-weather-bot:latest
+          image: docker.io/lewisgauss/telegram-weather-bot:v0.1.15
           env:
             - name: NTBA_FIX_319
               value: "1"
@@ -23,6 +23,20 @@ spec:
               value: "@daswetter_bot"
             - name: NODE_ENV
               value: "production"
+            - name: "TELEGRAM_TOKEN"
+              value: "5533296271:AAFv6WVqkT6oHHFVfeu_aRR4PxnaWl2X_lQ"
+            - name: "AUTHORIZED_USERS"
+              value: "520977704,-494152352,-202218917"
+            - name: "OWM_API_KEY"
+              value: "4ed6e1017b12d9f631d3551b0899a4ea"
+            - name: "GOOGLE_MAPS_API_KEY"
+              value: "AIzaSyCUPMr-cdkf61AhB3AahwgzyiPIz29CtmE"
+            - name: "REDIS_URL"
+              value: "redis://backend-shared-redis-master.telegram-weather-bot-temp.svc.cluster.local:6379"
+            - name: "REDIS_PASSWORD"
+              value: "12bdeZ3ogS"
+            - name: "APP_URL"
+              value: "https://homelab-twb-test.lewischan.dev"
           resources:
             requests:
               memory: 125Mi
@@ -30,4 +44,4 @@ spec:
             limits:
               memory: 125Mi
           ports:
-            - containerPort: 443
+            - containerPort: 80

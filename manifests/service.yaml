@@ -3,11 +3,11 @@ apiVersion: v1
 kind: Service
 metadata:
     name: das-wetter-bot
-    namespace: das-wetter-bot
+    namespace: telegram-weather-bot-temp
 spec:
     type: ClusterIP
     ports:
-    - port: 443
-      targetPort: 443
+    - port: 80
+      targetPort: 80
     selector:
         app: das-wetter-bot

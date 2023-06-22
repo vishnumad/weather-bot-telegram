@@ -1,19 +1,14 @@
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: das-wetter-bot
-  namespace: das-wetter-bot
+  namespace: telegram-weather-bot-temp
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
-  tls:
-  - hosts:
-    - dwb.lewischan.dev
-    secretName: das-wetter-bot-tls-secret
   rules:
-  - host: dwb.lewischan.dev
+  - host: homelab-twb-test.lewischan.dev
     http:
       paths:
       - path: /
@@ -22,4 +17,4 @@ spec:
           service:
             name: das-wetter-bot
             port:
-              number: 443
+              number: 80
