@@ -8,7 +8,7 @@ name: Build and push Docker image
 on:
   push:
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    tags: [ '*.*.*' ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -25,7 +25,6 @@ jobs:
   build-and-push:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       contents: read
       packages: write
@@ -36,12 +35,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      # Install the cosign tool except on PR
-      # https://github.com/sigstore/cosign-installer
-      - name: Install cosign
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@main
 
       # This is needed for multi arch build
       - name: Set up QEMU
