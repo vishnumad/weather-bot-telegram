@@ -26,9 +26,12 @@ function formattedMessage(location: string, current: any, today: any) {
   const windSpeedMph = msToMph(current.wind_speed);
   const windSpeedKmh = msToKmh(current.wind_speed);
 
+  const humidity = `${current.humidity}%`;
+
   const currentInfoTable = table([
     ['Real feel', `${feelsLikeF}F`, `${feelsLikeC}C`],
     ['Wind', `${windSpeedMph}mph`, `${windSpeedKmh}kmh`],
+    ['Humidity', humidity],
     ['UV Index', current.uvi],
   ]);
 
