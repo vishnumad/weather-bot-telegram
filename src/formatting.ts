@@ -3,7 +3,7 @@ import { getWeatherIcon } from './utils/icons';
 import { kToF, kToC, msToMph, msToKmh } from './weather/weatherApi';
 
 const BLANK = ' ';
-const SEPARATOR = '────────────';
+const SEPARATOR = '────────────────';
 
 function pre(text: string) {
   return `<pre>${text}</pre>`;
@@ -29,8 +29,8 @@ function formattedMessage(location: string, current: any, today: any) {
   const humidity = `${current.humidity}%`;
 
   const currentInfoTable = table([
-    ['Real feel', `${feelsLikeF}F`, `${feelsLikeC}C`],
-    ['Wind', `${windSpeedMph}mph`, `${windSpeedKmh}kmh`],
+    ['Real feel', `${feelsLikeF}°F`, `${feelsLikeC}°C`],
+    ['Wind', `${windSpeedMph}mi/h`, `${windSpeedKmh}km/h`],
     ['Humidity', humidity],
     ['UV Index', current.uvi],
   ]);
@@ -45,8 +45,8 @@ function formattedMessage(location: string, current: any, today: any) {
 
   const todaysWeatherTable = table(
     [
-      ['High', `${hiF}F`, `${hiC}C`],
-      ['Low', `${loF}F`, `${loC}C`],
+      ['High', `${hiF}°F`, `${hiC}°C`],
+      ['Low', `${loF}°F`, `${loC}°C`],
     ],
     { align: ['l', 'r', 'r'] },
   );
