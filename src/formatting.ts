@@ -57,7 +57,7 @@ function formattedMessage(location: string, current: any, today: any) {
     pre(getWeatherIcon(current.weather.code).join('\n')),
     BLANK,
     `${current.weather.main} – ${current.weather.description}`,
-    strong(`${currentF}F  •  ${currentC}C`),
+    strong(`${currentF}°F  •  ${currentC}°C`),
     BLANK,
     pre(currentInfoTable),
     pre(SEPARATOR),
