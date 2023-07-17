@@ -1,19 +1,20 @@
-import { getWeatherIcon } from './icons.js';
-import { kToF, kToC, msToMph, msToKmh } from './weather.js';
 import table from 'text-table';
+import { getWeatherIcon } from './utils/icons';
+import { kToF, kToC, msToMph, msToKmh } from './weather/weatherApi';
 
 const BLANK = ' ';
-const SEPARATOR = '────────────';
+const SEPARATOR = '────────────────';
 
-function pre(text) {
+function pre(text: string) {
   return `<pre>${text}</pre>`;
 }
 
-function strong(text) {
+function strong(text: string) {
   return `<strong>${text}</strong>`;
 }
 
-export function formattedMessage(location, current, today) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function formattedMessage(location: string, current: any, today: any) {
   // Feels like
   const feelsLikeF = kToF(current.feels_like, 1);
   const feelsLikeC = kToC(current.feels_like, 1);
@@ -25,9 +26,12 @@ export function formattedMessage(location, current, today) {
   const windSpeedMph = msToMph(current.wind_speed);
   const windSpeedKmh = msToKmh(current.wind_speed);
 
+  const humidity = `${current.humidity}%`;
+
   const currentInfoTable = table([
-    ['Real feel', `${feelsLikeF}F`, `${feelsLikeC}C`],
-    ['Wind', `${windSpeedMph}mph`, `${windSpeedKmh}kmh`],
+    ['Real feel', `${feelsLikeF}°F`, `${feelsLikeC}°C`],
+    ['Wind', `${windSpeedMph}mi/h`, `${windSpeedKmh}km/h`],
+    ['Humidity', humidity],
     ['UV Index', current.uvi],
   ]);
 
@@ -41,19 +45,19 @@ export function formattedMessage(location, current, today) {
 
   const todaysWeatherTable = table(
     [
-      ['High', `${hiF}F`, `${hiC}C`],
-      ['Low', `${loF}F`, `${loC}C`],
+      ['High', `${hiF}°F`, `${hiC}°C`],
+      ['Low', `${loF}°F`, `${loC}°C`],
     ],
-    { align: ['l', 'r', 'r'] }
+    { align: ['l', 'r', 'r'] },
   );
 
   const rows = [
-    location.city,
+    location,
     BLANK,
     pre(getWeatherIcon(current.weather.code).join('\n')),
     BLANK,
     `${current.weather.main} – ${current.weather.description}`,
-    strong(`${currentF}F  •  ${currentC}C`),
+    strong(`${currentF}°F  •  ${currentC}°C`),
     BLANK,
     pre(currentInfoTable),
     pre(SEPARATOR),
@@ -62,3 +66,5 @@ export function formattedMessage(location, current, today) {
 
   return rows.join('\n');
 }
+
+export { pre, strong, formattedMessage };
