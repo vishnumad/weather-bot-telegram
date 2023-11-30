@@ -19,7 +19,7 @@
   "main": "./src/index.ts",
   "scripts": {
     "build": "tsc",
-    "debug": "NODE_ENV=development TS_NODE_PROJECT=./tsconfig.json nodemon ./src/index.ts",
+    "debug": "NODE_ENV=development nodemon --no-warnings --loader ts-node/esm ./src/index.ts",
     "prettier": "prettier --config .prettierrc.json --write \"src/**/*{.ts,.js}\"",
     "start": "NODE_ENV=production node --experimental-specifier-resolution=node ./build/index.js"
   },
@@ -52,7 +52,7 @@
   "nodemonConfig": {
     "delay": 1500,
     "execMap": {
-      "ts": "ts-node"
+      "ts": "node"
     }
   }
 }
